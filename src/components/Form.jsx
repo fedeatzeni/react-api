@@ -15,7 +15,7 @@ export default function Form() {
     const [articles, setArticles] = useState([]);
     const [newArticle, setNewArticle] = useState(initialFormData);
 
-    //axios call
+    //axios call express-blog-api-crud
     function fetchPosts() {
         axios.get("http://localhost:3000/posts/")
             .then((res) => setArticles(res.data))
@@ -88,12 +88,14 @@ export default function Form() {
             </form >
 
             <div className="post">
+                {/* se non ci sono posto */}
+                {articles.length === 0 && <h2>Non ci sono post</h2>}
                 {articles.map((el) =>
                     // <li key={el.id}>{el.title} <button onClick={() => removeArticle(el.id)}>elimina</button></li>
                     <div key={el.id}>
                         <h2>{el.title}</h2>
                         <div>{el.content}</div>
-                        <img src={"http://localhost:3000/posts/" + el.image}e alt={el.title} />
+                        <img src={"http://localhost:3000/" + el.image}e alt={el.title} />
                         <div>{el.tags.join(", ")}</div>
                         <button onClick={() => removeArticle(el.id)}>elimina</button>
                     </div>
