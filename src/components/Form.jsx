@@ -1,18 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const startList = [
-    { id: 1, title: "primo", author: "a", content: "qualcosa", category: "a", public: true },
-    { id: 2, title: "secondo", author: "b", content: "qualcosa", category: "b", public: true },
-    { id: 3, title: "terzo", author: "b", content: "qualcosa", category: "c", public: true },
-]
+import axios from "axios";
+
+// const startList = [
+//     { id: 1, title: "primo", author: "a", content: "qualcosa", category: "a", public: true },
+//     { id: 2, title: "secondo", author: "b", content: "qualcosa", category: "b", public: true },
+//     { id: 3, title: "terzo", author: "b", content: "qualcosa", category: "c", public: true },
+// ]
 
 export default function Form() {
     const initialFormData = { title: "", author: "", content: "", category: "", public: "" }
 
     // stati lista 
-    const [articles, setArticles] = useState(startList);
+    const [articles, setArticles] = useState([]);
     const [newArticle, setNewArticle] = useState(initialFormData);
 
+    //axios call
+    function fetchPosts() {
+        axios.get("http://localhost:3000/posts/")
+            .then((res) => setArticles(res.data))
+            .catch(error => { console.log(error); })
+    }
+
+    useEffect(fetchPosts, [])
 
     function addArticle() {
         event.preventDefault();
@@ -77,15 +87,14 @@ export default function Form() {
                 <button>Invia</button>
             </form >
 
-            <div>
+            <div className="post">
                 {articles.map((el) =>
                     // <li key={el.id}>{el.title} <button onClick={() => removeArticle(el.id)}>elimina</button></li>
                     <div key={el.id}>
                         <h2>{el.title}</h2>
-                        <div>{el.author}</div>
                         <div>{el.content}</div>
-                        <div>{el.category}</div>
-                        {el.public ? "Pubblico" : "Da pubblicare"}
+                        <img src={"http://localhost:3000/posts/" + el.image}e alt={el.title} />
+                        <div>{el.tags.join(", ")}</div>
                         <button onClick={() => removeArticle(el.id)}>elimina</button>
                     </div>
                 )}

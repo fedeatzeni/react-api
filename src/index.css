@@ -7,3 +7,7 @@
 body {
   padding: 10px;
 }
+
+.post img {
+  max-height: 200px;
+}
