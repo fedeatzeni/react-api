@@ -30,8 +30,7 @@ export default function Form() {
         //create, chiamta ajax in post con body come argomento
         axios.post("http://localhost:3000/posts/", newArticle)
             .then((res) =>
-                setArticles((current => [...current, res.data]
-                ))
+                setArticles((current => [...current, res.data]))
             )
 
             .catch(error => { console.log(error); })
@@ -40,8 +39,14 @@ export default function Form() {
         setNewArticle(initialFormData)
     }
 
+    //delete
     function removeArticle(i) {
-        setArticles(articles.filter((article) => article.id !== i));
+        axios.delete(`http://localhost:3000/posts/${i}`)
+            .then((res) =>
+                setArticles(articles.filter((article) => article.id !== i))
+            )
+
+            .catch(error => { console.log(error); })
     }
 
     // aggiunge proprietà all'oggetto
