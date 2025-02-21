@@ -9,7 +9,7 @@ import axios from "axios";
 // ]
 
 export default function Form() {
-    const initialFormData = { title: "", author: "", content: "", category: "", public: "" }
+    const initialFormData = { title: "", content: "", image: "", tags: [] }
 
     // stati lista 
     const [articles, setArticles] = useState([]);
@@ -24,18 +24,20 @@ export default function Form() {
 
     useEffect(fetchPosts, [])
 
-    function addArticle() {
+    function addArticle(event) {
         event.preventDefault();
-        // crea l'id 
-        let newid = articles.length === 0 ? 1 : articles[articles.length - 1].id + 1
-        //aggiunge l'id al resto dell'oggetto
-        let newobj = { id: newid, ...newArticle }
-        // crea un nuovo array con l'aggiunta di un elemento 
-        let updatedArticles = [...articles, newobj];
-        //aggiorna l'array
-        setArticles(updatedArticles);
-        // pulisce l'input del form
-        setNewArticle(initialFormData);
+
+        //create, chiamta ajax in post con body come argomento
+        axios.post("http://localhost:3000/posts/", newArticle)
+            .then((res) =>
+                setArticles((current => [...current, res.data]
+                ))
+            )
+
+            .catch(error => { console.log(error); })
+
+        //resetta i campi
+        setNewArticle(initialFormData)
     }
 
     function removeArticle(i) {
@@ -44,8 +46,8 @@ export default function Form() {
 
     // aggiunge proprietà all'oggetto
     function handleFormData(event) {
-        // valuta che tipo di input è 
-        const value = event.target.type === "checkbox" ? event.target.checked : event.target.value
+        // trasforma la stringa in un array 
+        const value = event.target.name === "tags" ? event.target.value.split(",") : event.target.value
         setNewArticle((current) => ({ ...current, [event.target.name]: value }))
     }
 
@@ -58,12 +60,6 @@ export default function Form() {
                     placeholder="inserire il titolo"
                     onChange={handleFormData} />
 
-                <input type="text"
-                    value={newArticle.author}
-                    name="author"
-                    placeholder="inserire l'autore"
-                    onChange={handleFormData} />
-
                 <textarea
                     value={newArticle.content}
                     name="content"
@@ -71,17 +67,16 @@ export default function Form() {
                     onChange={handleFormData}></textarea>
 
                 <input type="text"
-                    value={newArticle.category}
-                    name="category"
-                    placeholder="inserire la categoria"
+                    value={newArticle.image}
+                    name="image"
+                    placeholder="inserire l'immagine"
                     onChange={handleFormData} />
 
-                <label htmlFor="public">Pubblicato</label>
-                <input type="checkbox"
-                    checked={newArticle.public}
-                    id="public"
-                    name="public"
-                    placeholder="inserire la categoria"
+
+                <input type="text"
+                    value={newArticle.tags}
+                    name="tags"
+                    placeholder="inserire i tag separati da ,"
                     onChange={handleFormData} />
 
                 <button>Invia</button>
@@ -95,7 +90,7 @@ export default function Form() {
                     <div key={el.id}>
                         <h2>{el.title}</h2>
                         <div>{el.content}</div>
-                        <img src={"http://localhost:3000/" + el.image}e alt={el.title} />
+                        <img src={el.image} e alt={el.title} />
                         <div>{el.tags.join(", ")}</div>
                         <button onClick={() => removeArticle(el.id)}>elimina</button>
                     </div>
